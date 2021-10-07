@@ -10,7 +10,7 @@ contract LemonadeStand {
     uint skuCount;
 
     // Event: 'State' with value 'ForSale'
-    enum State { ForSale, Sold }
+    enum State { ForSale, Sold, Shipped }
 
     // Struct: Item. name, sku, price, state, seller, buyer
     struct Item {
@@ -62,6 +62,14 @@ contract LemonadeStand {
     constructor() public payable {
         owner = msg.sender;
         skuCount = 0;
+    }
+
+// Define a function 'shipItem' that allows the seller to change the state to 'Shipped'
+    function shipItem(uint sku) public sold(sku) verifyCaller(items[sku].seller) {
+        // Update state
+        items[sku].state = State.Shipped;
+        // Emit the appropriate event
+        emit Shipped(sku);
     }
 
     function addItem(string _name, uint _price) onlyOwner public {
